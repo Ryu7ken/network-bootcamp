@@ -1,0 +1,101 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'Network Interfaces and Security Group for Net-Bootcamp VPC'
+
+Resources:
+  # Security Group for Network Interfaces
+  NetBootcampNicSG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: net-bootcamp-nic-sg
+      GroupDescription: Security group for network interfaces with internal and outbound access
+      VpcId: vpc-0e4cdd49890790399
+      SecurityGroupIngress:
+        - IpProtocol: -1
+          CidrIp: 10.200.123.0/24
+          Description: Allow for all internal communication
+      SecurityGroupEgress:
+        - IpProtocol: -1
+          CidrIp: 0.0.0.0/0
+          Description: Allow all outbound traffic
+      Tags:
+        - Key: Name
+          Value: net-bootcamp-nic-sg
+
+  # First Network Interface - Ubuntu
+  NetUbuntuNIC:
+    Type: AWS::EC2::NetworkInterface
+    Properties:
+      Description: Network Interface for Ubuntu instance
+      SubnetId: subnet-08c61632685853e00
+      GroupSet:
+        - !Ref NetBootcampNicSG
+      Tags:
+        - Key: Name
+          Value: Net-Ubuntu
+
+  # Second Network Interface - RedHat
+  NetRedHatNIC:
+    Type: AWS::EC2::NetworkInterface
+    Properties:
+      Description: Network Interface for RedHat instance
+      SubnetId: subnet-08c61632685853e00
+      GroupSet:
+        - !Ref NetBootcampNicSG
+      Tags:
+        - Key: Name
+          Value: Net-RedHat
+
+  # Third Network Interface - Windows
+  NetWindowsNIC:
+    Type: AWS::EC2::NetworkInterface
+    Properties:
+      Description: Network Interface for Windows instance
+      SubnetId: subnet-08c61632685853e00
+      GroupSet:
+        - !Ref NetBootcampNicSG
+      Tags:
+        - Key: Name
+          Value: Net-Windows
+
+Outputs:
+  SecurityGroupId:
+    Description: 'Security Group ID for Network Interfaces'
+    Value: !Ref NetBootcampNicSG
+    Export:
+      Name: !Sub '${AWS::StackName}-SecurityGroup-ID'
+
+  UbuntuNetworkInterfaceId:
+    Description: 'Ubuntu Network Interface ID'
+    Value: !Ref NetUbuntuNIC
+    Export:
+      Name: !Sub '${AWS::StackName}-Ubuntu-NIC-ID'
+
+  RedHatNetworkInterfaceId:
+    Description: 'RedHat Network Interface ID'
+    Value: !Ref NetRedHatNIC
+    Export:
+      Name: !Sub '${AWS::StackName}-RedHat-NIC-ID'
+
+  WindowsNetworkInterfaceId:
+    Description: 'Windows Network Interface ID'
+    Value: !Ref NetWindowsNIC
+    Export:
+      Name: !Sub '${AWS::StackName}-Windows-NIC-ID'
+
+  UbuntuPrivateIP:
+    Description: 'Ubuntu Network Interface Private IP'
+    Value: !GetAtt NetUbuntuNIC.PrimaryPrivateIpAddress
+    Export:
+      Name: !Sub '${AWS::StackName}-Ubuntu-PrivateIP'
+
+  RedHatPrivateIP:
+    Description: 'RedHat Network Interface Private IP'
+    Value: !GetAtt NetRedHatNIC.PrimaryPrivateIpAddress
+    Export:
+      Name: !Sub '${AWS::StackName}-RedHat-PrivateIP'
+
+  WindowsPrivateIP:
+    Description: 'Windows Network Interface Private IP'
+    Value: !GetAtt NetWindowsNIC.PrimaryPrivateIpAddress
+    Export:
+      Name: !Sub '${AWS::StackName}-Windows-PrivateIP'
