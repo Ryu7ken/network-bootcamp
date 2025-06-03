@@ -55,11 +55,11 @@ Followed the instructions and used Claude to generate CloudFormation Template `t
 ![EC2 Infra](/assets/ec2_infra.png)
 
 
-## EC@ Stack
+## EC2 Stack
 
 After successful creation EC2 CFN stack.
 
-![EC@ CFN Stack](/assets/ec2_cfn_stack.png)
+![EC2 CFN Stack](/assets/ec2_cfn_stack.png)
 
 Check EC2 Console for the 3 Instances created.
 
