@@ -1,0 +1,152 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'EC2 instances in public subnet with secondary private network interfaces'
+
+Resources:
+  # Ubuntu EC2 Instance
+  UbuntuInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: ami-0e35ddab05955cf57
+      InstanceType: t3.micro
+      KeyName: net-boot-pem
+      SubnetId: subnet-020bb119f922bbd66
+      SecurityGroupIds:
+        - sg-07d680556da04d553
+      BlockDeviceMappings:
+        - DeviceName: /dev/sda1
+          Ebs:
+            VolumeSize: 10
+            VolumeType: gp3
+            Iops: 3000
+            Encrypted: false
+            DeleteOnTermination: true
+      Tags:
+        - Key: Name
+          Value: Ubuntu
+
+  # RedHat EC2 Instance
+  RedHatInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: ami-0038df39db13a87e2
+      InstanceType: t3.micro
+      KeyName: net-boot-pem
+      SubnetId: subnet-020bb119f922bbd66
+      SecurityGroupIds:
+        - sg-07d680556da04d553
+      BlockDeviceMappings:
+        - DeviceName: /dev/sda1
+          Ebs:
+            VolumeSize: 10
+            VolumeType: gp3
+            Iops: 3000
+            Encrypted: false
+            DeleteOnTermination: true
+      Tags:
+        - Key: Name
+          Value: RedHat
+
+  # Windows EC2 Instance
+  WindowsInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: ami-0266c1f64e2a73942
+      InstanceType: t3.medium
+      KeyName: net-boot-pem
+      SubnetId: subnet-020bb119f922bbd66
+      SecurityGroupIds:
+        - sg-015b61d0b2bc01cdf
+      BlockDeviceMappings:
+        - DeviceName: /dev/sda1
+          Ebs:
+            VolumeSize: 30
+            VolumeType: gp3
+            Iops: 3000
+            Encrypted: false
+            DeleteOnTermination: true
+      Tags:
+        - Key: Name
+          Value: Windows
+
+  # Attach Ubuntu Private NIC as Secondary Interface
+  UbuntuNicAttachment:
+    Type: AWS::EC2::NetworkInterfaceAttachment
+    Properties:
+      InstanceId: !Ref UbuntuInstance
+      NetworkInterfaceId: eni-066f4c4ad5979d9cd
+      DeviceIndex: 1
+
+  # Attach RedHat Private NIC as Secondary Interface
+  RedHatNicAttachment:
+    Type: AWS::EC2::NetworkInterfaceAttachment
+    Properties:
+      InstanceId: !Ref RedHatInstance
+      NetworkInterfaceId: eni-06c1711d1fab49521
+      DeviceIndex: 1
+
+  # Attach Windows Private NIC as Secondary Interface
+  WindowsNicAttachment:
+    Type: AWS::EC2::NetworkInterfaceAttachment
+    Properties:
+      InstanceId: !Ref WindowsInstance
+      NetworkInterfaceId: eni-016f9b4453dd191ca
+      DeviceIndex: 1
+
+Outputs:
+  UbuntuInstanceId:
+    Description: 'Ubuntu Instance ID'
+    Value: !Ref UbuntuInstance
+    Export:
+      Name: !Sub '${AWS::StackName}-Ubuntu-InstanceId'
+
+  UbuntuPublicIP:
+    Description: 'Ubuntu Public IP Address'
+    Value: !GetAtt UbuntuInstance.PublicIp
+    Export:
+      Name: !Sub '${AWS::StackName}-Ubuntu-PublicIP'
+
+  UbuntuPrivateIP:
+    Description: 'Ubuntu Private IP Address (Primary Interface)'
+    Value: !GetAtt UbuntuInstance.PrivateIp
+    Export:
+      Name: !Sub '${AWS::StackName}-Ubuntu-PrivateIP'
+
+  RedHatInstanceId:
+    Description: 'RedHat Instance ID'
+    Value: !Ref RedHatInstance
+    Export:
+      Name: !Sub '${AWS::StackName}-RedHat-InstanceId'
+
+  RedHatPublicIP:
+    Description: 'RedHat Public IP Address'
+    Value: !GetAtt RedHatInstance.PublicIp
+    Export:
+      Name: !Sub '${AWS::StackName}-RedHat-PublicIP'
+
+  RedHatPrivateIP:
+    Description: 'RedHat Private IP Address (Primary Interface)'
+    Value: !GetAtt RedHatInstance.PrivateIp
+    Export:
+      Name: !Sub '${AWS::StackName}-RedHat-PrivateIP'
+
+  WindowsInstanceId:
+    Description: 'Windows Instance ID'
+    Value: !Ref WindowsInstance
+    Export:
+      Name: !Sub '${AWS::StackName}-Windows-InstanceId'
+
+  WindowsPublicIP:
+    Description: 'Windows Public IP Address'
+    Value: !GetAtt WindowsInstance.PublicIp
+    Export:
+      Name: !Sub '${AWS::StackName}-Windows-PublicIP'
+
+  WindowsPrivateIP:
+    Description: 'Windows Private IP Address (Primary Interface)'
+    Value: !GetAtt WindowsInstance.PrivateIp
+    Export:
+      Name: !Sub '${AWS::StackName}-Windows-PrivateIP'
+
+  NetworkConfiguration:
+    Description: 'Network Configuration Summary'
+    Value: 'Each instance has primary interface in public subnet with auto-assigned public IP and secondary interface in private subnet'
