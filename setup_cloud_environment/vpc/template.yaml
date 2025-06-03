@@ -1,0 +1,118 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'VPC setup with public and private subnets in Mumbai region'
+
+Resources:
+  # VPC
+  NetBootcampVPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 10.200.123.0/24
+      EnableDnsHostnames: true
+      EnableDnsSupport: true
+      Tags:
+        - Key: Name
+          Value: net-bootcamp-vpc
+
+  # Internet Gateway
+  NetBootcampIGW:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Name
+          Value: net-bootcamp-igw
+
+  # Attach Internet Gateway to VPC
+  NetBootcampIGWAttachment:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId: !Ref NetBootcampVPC
+      InternetGatewayId: !Ref NetBootcampIGW
+
+  # Public Subnet
+  NetBootcampPublicSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref NetBootcampVPC
+      CidrBlock: 10.200.123.0/25
+      AvailabilityZone: ap-south-1a
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Name
+          Value: net-bootcamp-public-subnet
+
+  # Private Subnet
+  NetBootcampPrivateSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref NetBootcampVPC
+      CidrBlock: 10.200.123.128/25
+      AvailabilityZone: ap-south-1a
+      Tags:
+        - Key: Name
+          Value: net-bootcamp-private-subnet
+
+  # Public Route Table
+  NetBootcampPublicRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref NetBootcampVPC
+      Tags:
+        - Key: Name
+          Value: net-bootcamp-public-rt
+
+  # Private Route Table
+  NetBootcampPrivateRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref NetBootcampVPC
+      Tags:
+        - Key: Name
+          Value: net-bootcamp-private-rt
+
+  # Public Route to Internet Gateway
+  NetBootcampPublicRoute:
+    Type: AWS::EC2::Route
+    DependsOn: NetBootcampIGWAttachment
+    Properties:
+      RouteTableId: !Ref NetBootcampPublicRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref NetBootcampIGW
+
+  # Associate Public Subnet with Public Route Table
+  NetBootcampPublicSubnetRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref NetBootcampPublicSubnet
+      RouteTableId: !Ref NetBootcampPublicRouteTable
+
+  # Associate Private Subnet with Private Route Table
+  NetBootcampPrivateSubnetRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref NetBootcampPrivateSubnet
+      RouteTableId: !Ref NetBootcampPrivateRouteTable
+
+Outputs:
+  VPCId:
+    Description: 'VPC ID'
+    Value: !Ref NetBootcampVPC
+    Export:
+      Name: !Sub '${AWS::StackName}-VPC-ID'
+
+  PublicSubnetId:
+    Description: 'Public Subnet ID'
+    Value: !Ref NetBootcampPublicSubnet
+    Export:
+      Name: !Sub '${AWS::StackName}-PublicSubnet-ID'
+
+  PrivateSubnetId:
+    Description: 'Private Subnet ID'
+    Value: !Ref NetBootcampPrivateSubnet
+    Export:
+      Name: !Sub '${AWS::StackName}-PrivateSubnet-ID'
+
+  InternetGatewayId:
+    Description: 'Internet Gateway ID'
+    Value: !Ref NetBootcampIGW
+    Export:
+      Name: !Sub '${AWS::StackName}-IGW-ID'
