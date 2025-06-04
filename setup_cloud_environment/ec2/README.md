@@ -50,7 +50,7 @@ Launching Ubuntu, RedHat Enterprise Linux and Windows EC2 Instance in the Public
 Followed the instructions and used Claude to generate CloudFormation Template `template.yaml` and deployment script `deploy_ec2.sh`.
 
 
-## Visualization with Infrastructure Composer
+## EC2 Visualization
 
 ![EC2 Infra](/assets/ec2_infra.png)
 

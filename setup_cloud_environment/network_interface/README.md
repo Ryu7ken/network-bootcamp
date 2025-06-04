@@ -15,7 +15,7 @@ New Network interface is required for the EC2 instances to the networking config
 Followed the instructions and used Claude to generate CloudFormation Template `template.yaml` and depoyment script `deploy_nic.sh`.
 
 
-## Visualization with Infrastructure Composer
+## Network Interface Visualization
 
 ![Network Interface](/assets/nic_infra.png)
 
