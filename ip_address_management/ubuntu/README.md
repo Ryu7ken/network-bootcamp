@@ -17,7 +17,7 @@ According to RFC 4638, the Ethernet header frame defaults to 1500 Bytes, but her
 > In AWS when sending data between Regions, to defaults back to 1500 Bytes from 9001 Bytes. (More info at AWS Documentation)
 
 
-> [!TEXT]
+> [!NOTE]
 > How does different MTU size matter ?
 > Having a MTU of 1500 Bytes usually means less bandwidth consumption and faster transfer of data which can be beneficial like during phone calls. And having Jumbo frames of 9001 Bytes means packing more data within a Network Packet in one go.
 
