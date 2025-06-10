@@ -187,7 +187,7 @@ age: 71408
 
 ### lsof
 
-`lsof` is used to check which files open and listening to which port.
+`lsof` is used to check which filesi are open and listening to which port.
 
 First start a simple server with python
 
@@ -205,4 +205,69 @@ ubuntu@ip-10-200-123-39:~$ Serving HTTP on 0.0.0.0 port 8080 (http://0.0.0.0:808
 ubuntu@ip-10-200-123-39:~$ lsof -i
 COMMAND  PID   USER   FD   TYPE DEVICE SIZE/OFF NODE NAME
 python3 1456 ubuntu    3u  IPv4  11843      0t0  TCP *:http-alt (LISTEN)
+```
+
+
+### tcpdump
+
+`tcpdump` is a capture utility which can be used to live capture on Network Interfaces and output to a file.
+
+- Try pinging the RedHat Instance using its private IP, the ping should be successful as previous the Security Group was configured for All traffic for the Private Subnet.
+
+```text
+ubuntu@ip-10-200-123-39:~$ ping 10.200.123.146
+PING 10.200.123.146 (10.200.123.146) 56(84) bytes of data.
+64 bytes from 10.200.123.146: icmp_seq=1 ttl=64 time=0.473 ms
+64 bytes from 10.200.123.146: icmp_seq=2 ttl=64 time=0.165 ms
+64 bytes from 10.200.123.146: icmp_seq=3 ttl=64 time=0.170 ms
+64 bytes from 10.200.123.146: icmp_seq=4 ttl=64 time=0.156 ms
+^C
+--- 10.200.123.146 ping statistics ---
+4 packets transmitted, 4 received, 0% packet loss, time 3104ms
+rtt min/avg/max/mdev = 0.156/0.241/0.473/0.134 ms
+```
+
+- On RedHat Instance run command `sudo tcpdump -i ens6` to capture on the Private Network Interface **ens6** and also keep the `ping` running on the Ubuntu Instance.
+
+```text
+[ec2-user@ip-10-200-123-41 ~]$ sudo tcpdump -i ens6
+dropped privs to tcpdump
+tcpdump: verbose output suppressed, use -v[v]... for full protocol decode
+listening on ens6, link-type EN10MB (Ethernet), snapshot length 262144 bytes
+14:03:57.173483 IP ip-10-200-123-216.ap-south-1.compute.internal > ip-10-200-123-146.ap-south-1.compute.internal: ICMP echo request, id 1414, seq 5, length 64
+14:03:57.173531 IP ip-10-200-123-146.ap-south-1.compute.internal > ip-10-200-123-216.ap-south-1.compute.internal: ICMP echo reply, id 1414, seq 5, length 64
+14:03:58.197596 IP ip-10-200-123-216.ap-south-1.compute.internal > ip-10-200-123-146.ap-south-1.compute.internal: ICMP echo request, id 1414, seq 6, length 64
+14:03:58.197624 IP ip-10-200-123-146.ap-south-1.compute.internal > ip-10-200-123-216.ap-south-1.compute.internal: ICMP echo reply, id 1414, seq 6, length 64
+```
+
+
+- We can output the `tcpdump` output directly to a file instead of outputting on the terminal.
+
+```text
+[ec2-user@ip-10-200-123-41 ~]$ sudo tcpdump -w test.pcap -i ens6
+dropped privs to tcpdump
+tcpdump: listening on ens6, link-type EN10MB (Ethernet), snapshot length 262144 bytes
+^C24 packets captured
+26 packets received by filter
+0 packets dropped by kernel
+
+[ec2-user@ip-10-200-123-41 ~]$ ls
+test.pcap
+```
+
+
+- We need to install Wireshark CLI to be able to read the `test.pcap` file.
+
+```sh
+sudo dnf install wireshark-cli
+```
+
+```text
+[ec2-user@ip-10-200-123-41 ~]$ tshark -r test.pcap
+    1   0.000000 10.200.123.216 → 10.200.123.146 ICMP 98 Echo (ping) request  id=0x058b, seq=27/6912, ttl=64
+    2   0.000027 10.200.123.146 → 10.200.123.216 ICMP 98 Echo (ping) reply    id=0x058b, seq=27/6912, ttl=64 (request in 1)
+    3   1.024006 10.200.123.216 → 10.200.123.146 ICMP 98 Echo (ping) request  id=0x058b, seq=28/7168, ttl=64
+    4   1.024053 10.200.123.146 → 10.200.123.216 ICMP 98 Echo (ping) reply    id=0x058b, seq=28/7168, ttl=64 (request in 3)
+    5   2.047993 10.200.123.216 → 10.200.123.146 ICMP 98 Echo (ping) request  id=0x058b, seq=29/7424, ttl=64
+    6   2.048045 10.200.123.146 → 10.200.123.216 ICMP 98 Echo (ping) reply    id=0x058b, seq=29/7424, ttl=64 (request in 5)
 ```
