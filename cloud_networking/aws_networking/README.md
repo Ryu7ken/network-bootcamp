@@ -32,13 +32,6 @@ VPC Peering enables traffic flow between 2 VPCs staying within the AWS Network, 
 ![Accept Peering](/assets/vpc_peering_accept-ryu.png)
 
 
-- Again we will send Peering request from VPC ken to VPC ryu and VPC ryu has to accept the Peering request.
-
-![VPC Peering Console](/assets/vpc_peering-ken.png)
-
-![Accept Peering](/assets/vpc_peering_accept-ken.png)
-
-
 - We will add routing for traffic flow between *ryu-subnet-private2-ap-south-1c* and *ken-subnet-private1-ap-south-1c*. So we will add routing in the *ryu-rtb-private2-ap-south-1c* route table and *ken-rtb-private1-ap-south-1c* route table.
 
 ![Peering Routing](/assets/vpc_peering_routing-ryu.png)
