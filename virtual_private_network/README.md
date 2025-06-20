@@ -23,12 +23,18 @@ Let the **BGP ASN** be default (65000) and for **IP address** provide your own P
 
 ![Customer Gateway](/assets/vpn_cg.png)
 
+- **BGP ASN** - Border Gateway Protocol (BGP) is the routing protocol that the internet runs on and is the only protocol that we can use on the cloud. BGP uses the concept of autonomous system numbers to identify the systems that are connecting to each other.
+
+Here we want the BGP to act in a certiain way, so we are going to make it external BGP and its external when two sides of the BGP has different autonomous system numbers, so they recognise each other as members of a different organization.
+
 
 ### Virtual Private Gateway
 
 Let the **Autonomous System Number (ASN)** be set to **Amazon default ASN**.
 
 ![Virtual Private Gateway](/assets/vpn_vpg.png)
+
+- **ipsec** - It means encrypted tunnel connectivity between two end points and it is cryptographically encrypted inside the tunnel. Inside the tunnel Private IP Addresses will be used but on the outside there is a Header on top of the Private Address which is the Public Address.
 
 
 ### Site-to-Site VPN Connection
@@ -166,6 +172,8 @@ We need to enable **Route Propagation** in the Private Subnet Route Table and th
 ![VPC Subnet](/assets/vpn_prop-1.png)
 
 ![VPC Subnet](/assets/vpn_prop-2.png)
+
+- **Route Propagation** - This is used to import routes from third party sources into the Subnet Route Table.
 
 
 ### EC2 Security Group
