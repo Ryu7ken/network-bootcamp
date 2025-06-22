@@ -59,19 +59,14 @@ We will open **Server Manager** and click on **Add roles and features**.
 
 ![Windows Server Manager](/assets/rp_win_ser_man-4.png)
 
+Make sure IIS is running.
+
 
 ### Personal System Windows
 
 We can optionally on our own system create a DNS for the Reverse Proxy by providing the name from the squid config and Public IP of the Ubuntu EC2 at `C:\Windows\System32\drivers\etc\hosts`.
 
 ![Windows Hosts](/assets/rp_win_hosts.png)
-
-
-### Windows IIS
-
-Make sure IIS is running.
-
-![Windows IIS](/assets/rp_win_iis.png)
 
 
 ### Security Group
