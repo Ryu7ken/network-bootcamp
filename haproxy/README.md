@@ -94,16 +94,16 @@ route add 172.20.20.0 mask 255.255.255.0 10.200.123.129 IF 8
 
 - We also need to add the Containerlab network routing in the Private Subnet Route Tables as well, so that the Windows Server can send packets to the Private Network Interface of the Ubuntu EC2 to view the Web pages.
 
-![Private Route Table](assets/hap_ps_rt.png)
+![Private Route Table](/assets/hap_ps_rt.png)
 
 
 - We also need to Disable `Source/destination check` on the Secondary Network Interface of the Ubuntu EC2, so that the packets sent for the Containerlab network are not dropped.
 
-![Private NIC](assets/hap_ps_nic.png)
+![Private NIC](/assets/hap_ps_nic.png)
 
 
 - We can see the Web page and also the HAProxy Round-Robin in action.
 
-![Web Page](assets/hap_page-1.png)
+![Web Page](/assets/hap_page-1.png)
 
-![Web Page](assets/hap_page-2.png)
+![Web Page](/assets/hap_page-2.png)
